@@ -1,101 +1,68 @@
-import Image from "next/image";
+import Link from "next/link";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex flex-col min-h-[80vh]">
+      
+      {/* القسم الترحيبي */}
+      <section className="flex flex-col items-center justify-center text-center py-20 px-4">
+        <div className="bg-primary/5 text-primary font-bold px-4 py-2 rounded-full mb-6 text-sm border border-primary/10">
+          🚀 المنصة الأولى لطلاب الجامعة
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <h1 className="text-4xl md:text-6xl font-extrabold text-primary mb-6 leading-tight">
+          كل اللي تحتاجه في الجامعة <br />
+          <span className="text-secondary">في مكان واحد!</span>
+        </h1>
+        <p className="text-gray-500 text-lg md:text-xl max-w-2xl mb-10">
+          منصة IU Connect صُممت خصيصاً لتسهيل حياتك الجامعية. بيع واشتر، نسق مشاويرك، ودوّر على مفقوداتك بكل سهولة.
+        </p>
+        
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link href="/market" className="bg-primary hover:bg-[#0c3a6b] text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md hover:shadow-lg text-lg">
+            تصفح السوق الآن 🛍️
+          </Link>
+          <Link href="/groups" className="bg-white hover:bg-gray-50 text-primary border-2 border-gray-100 font-bold py-3 px-8 rounded-xl transition-all shadow-sm hover:shadow-md text-lg">
+            شوف المجموعات 👥
+          </Link>
+        </div>
+      </section>
+
+      {/* قسم الخدمات (تعدل لـ 3 بطاقات بدل 4) */}
+      <section className="py-12 px-4 max-w-5xl mx-auto w-full">
+        <h2 className="text-2xl font-bold text-center text-primary mb-10">خدمات المنصة</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* كرت السوق */}
+          <Link href="/market" className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all group">
+            <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+              🛍️
+            </div>
+            <h3 className="text-xl font-bold text-primary mb-2">السوق الجامعي</h3>
+            <p className="text-gray-500 text-sm">بيع واشتر الكتب، الأجهزة، وأي شيء تحتاجه من زملائك الطلاب.</p>
+          </Link>
+
+          {/* كرت المجموعات */}
+          <Link href="/groups" className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all group">
+            <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+              👥
+            </div>
+            <h3 className="text-xl font-bold text-primary mb-2">المجموعات والقطة</h3>
+            <p className="text-gray-500 text-sm">نسق مشاويرك، اطلب أكل وقط مع الشباب، أو ابحث عن قروب مذاكرة.</p>
+          </Link>
+
+          {/* كرت المفقودات */}
+          <Link href="/lost" className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all group">
+            <div className="w-14 h-14 bg-red-50 text-red-600 rounded-xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+              🔍
+            </div>
+            <h3 className="text-xl font-bold text-primary mb-2">المفقودات</h3>
+            <p className="text-gray-500 text-sm">ضيعت شيء أو لقيت غرض في القاعات؟ نزله هنا عشان يرجع لصاحبه.</p>
+          </Link>
+
+        </div>
+      </section>
+
     </div>
   );
 }
