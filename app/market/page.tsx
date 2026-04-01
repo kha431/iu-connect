@@ -5,15 +5,16 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 
 function timeAgo(dateString: string) {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  
-  if (diffInSeconds < 60) return 'الآن';
-  if (diffInSeconds < 3600) return `منذ ${Math.floor(diffInSeconds / 60)} دقيقة`;
-  if (diffInSeconds < 86400) return `منذ ${Math.floor(diffInSeconds / 3600)} ساعة`;
-  return `قبل ${Math.floor(diffInSeconds / 86400)} يوم`;
+  const diff = Math.floor((new Date().getTime() - new Date(dateString).getTime()) / 1000);
+  if (diff < 3600) return `منذ ${Math.floor(diff / 60)} دقيقة`;
+  if (diff < 86400) return `منذ ${Math.floor(diff / 3600)} ساعة`;
+  return `قبل ${Math.floor(diff / 86400)} يوم`;
 }
+
+// دالة لتنظيف النص العربي (عشان البحث يصير دقيق وما يفرق بين أ و ا أو ة و هـ)
+const normalizeText = (text: string) => {
+  return text.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase();
+};
 
 export default function MarketPage() {
   const [items, setItems] = useState<any[]>([]);
@@ -30,13 +31,32 @@ export default function MarketPage() {
     fetchItems();
   }, []);
 
+  // الفلترة والبحث الذكي
   const filteredItems = items.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) || item.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "الكل" || item.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    
+    if (!searchTerm) return matchesCategory;
+
+    // نقسم كلمات البحث ونبحث عن كل كلمة لحالها في العنوان أو الوصف
+    const searchWords = normalizeText(searchTerm).split(' ').filter(w => w);
+    const itemTitle = normalizeText(item.title);
+    const itemDesc = normalizeText(item.description);
+
+    const matchesSearch = searchWords.every(word => itemTitle.includes(word) || itemDesc.includes(word));
+    
+    return matchesCategory && matchesSearch;
   });
 
-  const categories = ["الكل", "إلكترونيات", "كتب دراسية", "أثاث", "ملابس", "أخرى"];
+  const categories = [
+    "الكل", 
+    "حراج الكتب", 
+    "السيارات والدراجات والسكوترات", 
+    "حراج الأجهزة", 
+    "حراج الأثاث", 
+    "مستلزمات شخصية", 
+    "أطعمة ومشروبات", 
+    "أخرى"
+  ];
 
   return (
     <div className="max-w-4xl mx-auto space-y-4 mt-4 pb-16">
@@ -44,7 +64,7 @@ export default function MarketPage() {
         <div className="flex gap-2">
           <input 
             type="text" 
-            placeholder="ابحث عن السلعة... (تحديث فوري)" 
+            placeholder="ابحث عن السلعة... (بحث ذكي)" 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-primary transition text-lg"
@@ -76,14 +96,12 @@ export default function MarketPage() {
                <div className="w-32 h-32 bg-gray-200 rounded-lg"></div>
                <div className="flex-1 space-y-3 py-2">
                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                 <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                 <div className="h-4 bg-gray-200 rounded w-1/2 mt-4"></div>
                </div>
              </div>
           ))}
         </div>
       ) : filteredItems.length === 0 ? (
-        <div className="text-center py-20 text-gray-500 font-medium">لم نجد سلع مطابقة لبحثك!</div>
+        <div className="text-center py-20 text-gray-500 font-medium">لم نجد نتائج مطابقة! جرب كلمات مختلفة.</div>
       ) : (
         <div className="space-y-4">
           {filteredItems.map((item) => (
@@ -95,9 +113,7 @@ export default function MarketPage() {
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-4xl">📦</div>
                   )}
-                  <span className="absolute bottom-1 right-1 bg-black/60 text-white px-2 py-0.5 rounded text-[10px]">
-                    📸 1
-                  </span>
+                  <span className="absolute bottom-1 right-1 bg-black/60 text-white px-2 py-0.5 rounded text-[10px]">📸 1</span>
                 </div>
                 
                 <div className="flex flex-col flex-1 py-1">
@@ -106,12 +122,8 @@ export default function MarketPage() {
                   
                   <div className="mt-auto flex justify-between items-end text-xs text-gray-500 font-medium">
                     <div className="space-y-1">
-                      <div className="flex items-center gap-1">
-                        <span>👤</span> طالب ({item.user_id?.slice(0, 4)})
-                      </div>
-                      <div className="flex items-center gap-1 text-gray-400">
-                        <span>📍</span> الجامعة الإسلامية
-                      </div>
+                      <div className="flex items-center gap-1"><span>👤</span> طالب ({item.user_id?.slice(0, 4)})</div>
+                      <div className="flex items-center gap-1 text-gray-400"><span>📍</span> الجامعة الإسلامية</div>
                     </div>
                     <div className="text-left">
                       <div>🕒 {timeAgo(item.created_at)}</div>
