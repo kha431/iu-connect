@@ -1,12 +1,21 @@
 import { create } from 'zustand';
-import { User } from '@supabase/supabase-js';
+import { persist } from 'zustand/middleware';
 
-interface AuthState {
-  user: User | null;
-  setUser: (user: User | null) => void;
+interface AuthStore {
+  user: any | null;
+  setUser: (user: any) => void;
+  clearUser: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-}));
+export const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
+      user: null,
+      setUser: (user) => set({ user }),
+      clearUser: () => set({ user: null }),
+    }),
+    {
+      name: 'iu-connect-auth', // هذا السطر هو السحر اللي يحفظ الدخول في المتصفح
+    }
+  )
+);
