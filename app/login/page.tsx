@@ -102,18 +102,18 @@ export default function LoginPage() {
       ) : (
         <form onSubmit={handleVerifyOtp} className="space-y-4">
           <div className="text-center text-sm text-gray-600 mb-4">
-            أرسلنا كود من 6 أرقام إلى بريدك:<br/><span className="font-bold text-primary">{email}</span>
+            أرسلنا كود الدخول إلى بريدك:<br/><span className="font-bold text-primary">{email}</span>
           </div>
           <div>
             <input 
               type="text" 
               required
-              placeholder="أدخل الكود (6 أرقام)"
+              placeholder="أدخل الكود السري"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               className="w-full px-4 py-4 rounded-xl border border-gray-300 outline-none focus:border-primary text-center text-2xl tracking-widest font-bold"
               dir="ltr"
-              maxLength={6}
+              maxLength={8}
             />
           </div>
           <button 
