@@ -1,37 +1,28 @@
 "use client";
 
+import { useAuthStore } from '@/store/authStore';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const [isChecking, setIsChecking] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const user = useAuthStore((state: any) => state.user);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const verifyUser = async () => {
-      // الفحص الأكيد والمباشر من قاعدة البيانات
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setIsAuthenticated(true);
-      }
-      setIsChecking(false);
-    };
-    verifyUser();
+    setMounted(true);
   }, []);
 
-  // شاشة الانتظار (تمنع الطرد السريع)
-  if (isChecking) {
+  // منع رمش الصفحة قبل تحميل الذاكرة
+  if (!mounted) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 space-y-4">
+      <div className="flex justify-center py-32">
         <div className="w-12 h-12 border-4 border-[#0f4c8a] border-t-transparent rounded-full animate-spin"></div>
-        <div className="text-xl font-bold text-[#0f4c8a] animate-pulse">جاري التحقق من هويتك...</div>
       </div>
     );
   }
 
-  // إذا السيرفر أكد إنك مو مسجل، يطلع القفل
-  if (!isAuthenticated) {
+  // إذا مافي مستخدم في الذاكرة، اطرده
+  if (!user) {
     return (
       <div className="flex flex-col items-center justify-center py-32 space-y-4">
         <span className="text-6xl mb-4">🔒</span>
@@ -44,6 +35,6 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // إذا مسجل، يفتح له الصفحة بكل سلاسة
+  // إذا مسجل، افتح له الصفحة مباشرة
   return <>{children}</>;
 }
