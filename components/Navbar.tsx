@@ -1,63 +1,69 @@
 "use client";
 
 import Link from 'next/link';
-import { useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
-import { usePathname } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
-  const { user, setUser } = useAuthStore();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [setUser]);
+  const { user, clearUser } = useAuthStore();
+  const router = useRouter();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    clearUser();
+    router.push('/login');
   };
 
-  const isActive = (path: string) => pathname.startsWith(path);
-
   return (
-    <nav className="bg-primary text-white p-4 shadow-md sticky top-0 z-50">
-      <div className="container mx-auto flex justify-between items-center px-2 sm:px-4">
+    <nav className="bg-[#0f4c8a] text-white shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between" dir="rtl">
         
-        <div className="flex items-center gap-3 sm:gap-6">
-          <Link href="/" className="text-xl sm:text-2xl font-bold flex items-center gap-2 hover:opacity-80 transition">
-            <span>🕌</span> <span className="hidden lg:inline">IU Connect</span>
+        {/* اليمين: الشعار والعنوان (بدون إيموجي) */}
+        <div className="flex items-center gap-2">
+          <Link href="/" className="text-3xl font-extrabold tracking-tight hover:opacity-90 transition">
+            IU Connect
           </Link>
-
-          <div className="flex items-center gap-3 sm:gap-4 border-r border-white/20 pr-3 sm:pr-4 text-xs sm:text-base overflow-x-auto whitespace-nowrap">
-            <Link href="/market" className={`font-medium transition ${isActive('/market') ? 'text-secondary' : 'text-gray-200 hover:text-white'}`}>السوق</Link>
-            <Link href="/groups" className={`font-medium transition ${isActive('/groups') ? 'text-secondary' : 'text-gray-200 hover:text-white'}`}>المجموعات</Link>
-            <Link href="/lost" className={`font-medium transition ${isActive('/lost') ? 'text-secondary' : 'text-gray-200 hover:text-white'}`}>المفقودات</Link>
+          <div className="h-6 w-px bg-white/20 mx-2"></div>
+          
+          {/* روابط التنقل الرئيسية */}
+          <div className="hidden md:flex items-center gap-6 text-lg font-medium">
+            <Link href="/market" className="hover:text-secondary transition text-[#fbc02d]">السوق</Link>
+            <Link href="/groups" className="hover:text-secondary transition opacity-80 hover:opacity-100">المجموعات</Link>
+            <Link href="/lost" className="hover:text-secondary transition opacity-80 hover:opacity-100">المفقودات</Link>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        {/* اليسار: إجراءات المستخدم (خروج + إعلاناتي بأيقونة واضحة) */}
+        <div className="flex items-center gap-4">
           {user ? (
-            <div className="flex items-center gap-3">
-              {/* زر حسابي الجديد */}
-              <Link href="/profile" className={`hidden sm:flex items-center gap-1 font-bold transition ${isActive('/profile') ? 'text-secondary' : 'text-gray-200 hover:text-white'}`}>
-                <span>👤</span> إعلاناتي
+            <>
+              {/* أيقونة الملف الشخصي وإعلاناتي (تم تحسينها) */}
+              <Link href="/profile" className="flex items-center gap-2.5 bg-white/10 px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/15 transition group">
+                {/* أيقونة مستخدم واضحة كـ SVG بدلاً من الإيموجي الباهت */}
+                <svg 
+                  className="w-6 h-6 text-secondary group-hover:scale-110 transition-transform" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor" 
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span className="font-bold text-lg">إعلاناتي</span>
               </Link>
-              <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition">
+              
+              {/* زر الخروج الأحمر */}
+              <button 
+                onClick={handleLogout}
+                className="bg-red-600/90 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-red-700 transition"
+              >
                 خروج
               </button>
-            </div>
+            </>
           ) : (
-            <Link href="/login" className="bg-secondary hover:bg-yellow-600 text-white px-3 py-1.5 sm:px-5 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition">
-              دخول
+            <Link href="/login" className="bg-secondary text-primary-dark font-bold px-6 py-2.5 rounded-xl hover:bg-[#fbc02d] transition text-lg">
+              تسجيل الدخول
             </Link>
           )}
         </div>
