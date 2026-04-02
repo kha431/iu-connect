@@ -1,130 +1,136 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/authStore";
-import { supabase } from "@/lib/supabase";
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-export default function NewItemPage() {
+export default function AddListingPage() {
   const router = useRouter();
-  const { user } = useAuthStore();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  
+  // هذا هو السحر: متغير يخلي الصفحة تنتظر وما تطردك مباشرة
+  const [isChecking, setIsChecking] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
-    title: "",
-    price: "",
-    category: "حراج الأجهزة",
-    condition: "مستعمل",
-    description: "",
-    whatsapp: ""
-  });
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('حراج الكتب');
+  const [condition, setCondition] = useState('مستعمل نظيف');
+  const [whatsapp, setWhatsapp] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return alert("سجل دخولك أولاً!");
-    setIsSubmitting(true);
-
-    try {
-      let imageUrl = null;
-      if (imageFile) {
-        const fileName = `${Math.random()}-${imageFile.name}`;
-        const { error: uploadError } = await supabase.storage.from('iu_images').upload(`${user.id}/${fileName}`, imageFile);
-        if (!uploadError) {
-          const { data: publicUrl } = supabase.storage.from('iu_images').getPublicUrl(`${user.id}/${fileName}`);
-          imageUrl = publicUrl.publicUrl;
-        }
+  // التأكد المباشر من السيرفر
+  useEffect(() => {
+    const verifyUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push('/login'); // إذا فعلاً مو مسجل، اطرده
+      } else {
+        setUserId(session.user.id);
+        setIsChecking(false); // إذا مسجل، افتح له الصفحة
       }
+    };
+    verifyUser();
+  }, [router]);
 
-      const { error: insertError } = await supabase.from('listings').insert({
-        user_id: user.id,
-        title: formData.title,
-        price: Number(formData.price),
-        category: formData.category,
-        condition: formData.condition,
-        description: formData.description,
-        whatsapp: formData.whatsapp,
-        image_url: imageUrl,
-      });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
-      if (insertError) throw insertError;
+    const { error } = await supabase.from('listings').insert([
+      {
+        user_id: userId,
+        title,
+        description,
+        price: Number(price),
+        category,
+        condition,
+        whatsapp,
+        image_url: imageUrl
+      }
+    ]);
+
+    setLoading(false);
+    if (error) {
+      alert('حدث خطأ أثناء الإضافة: ' + error.message);
+    } else {
       router.push('/market');
-    } catch (err) {
-      alert("حدث خطأ أثناء الإضافة.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
+
+  // شاشة الانتظار اللطيفة بدل الطرد الفوري
+  if (isChecking) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 space-y-4">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <div className="text-xl font-bold text-primary animate-pulse">جاري تجهيز الصفحة...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mt-4">
-      <h1 className="text-2xl font-bold text-primary mb-6">إضافة إعلان جديد 🛒</h1>
-      <form onSubmit={onSubmit} className="space-y-5">
-        
+    <div className="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-3xl shadow-lg border border-gray-100 mb-20">
+      <h1 className="text-3xl font-extrabold text-primary mb-8 text-center">إضافة إعلان جديد 📦</h1>
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">صورة الإعلان</label>
-          <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:bg-gray-50 relative">
-            <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-            {imagePreview ? <img src={imagePreview} className="h-32 mx-auto rounded-lg" /> : <span>📸 اضغط لرفع صورة</span>}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">عنوان الإعلان</label>
-          <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 outline-none" />
+          <label className="block text-gray-700 font-bold mb-2">عنوان الإعلان</label>
+          <input required type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full p-4 border rounded-xl bg-gray-50 focus:bg-white focus:border-primary outline-none transition" placeholder="مثال: ايباد برو 2022..." />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">السعر (0 = على السوم)</label>
-            <input required type="number" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 outline-none" />
+            <label className="block text-gray-700 font-bold mb-2">القسم</label>
+            <select value={category} onChange={e => setCategory(e.target.value)} className="w-full p-4 border rounded-xl bg-gray-50 focus:bg-white focus:border-primary outline-none transition">
+              <option>حراج الكتب</option>
+              <option>حراج الأجهزة</option>
+              <option>حراج الأثاث</option>
+              <option>سيارات ودراجات</option>
+              <option>مستلزمات شخصية</option>
+            </select>
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">رقم الواتساب</label>
-            <input required type="text" placeholder="05XXXXXXXX" value={formData.whatsapp} onChange={e => setFormData({...formData, whatsapp: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 outline-none text-left" dir="ltr" />
+            <label className="block text-gray-700 font-bold mb-2">الحالة</label>
+            <select value={condition} onChange={e => setCondition(e.target.value)} className="w-full p-4 border rounded-xl bg-gray-50 focus:bg-white focus:border-primary outline-none transition">
+              <option>جديد لم يستخدم</option>
+              <option>مستعمل أخو الجديد</option>
+              <option>مستعمل نظيف</option>
+              <option>مستعمل</option>
+            </select>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">القسم</label>
-            <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 outline-none bg-white">
-              <option value="حراج الكتب">📚 حراج الكتب</option>
-              <option value="السيارات والدراجات والسكوترات">🚗 السيارات والدراجات</option>
-              <option value="حراج الأجهزة">💻 حراج الأجهزة</option>
-              <option value="حراج الأثاث">🛏️ حراج الأثاث</option>
-              <option value="مستلزمات شخصية">👔 مستلزمات شخصية</option>
-              <option value="أطعمة ومشروبات">🍔 أطعمة ومشروبات</option>
-              <option value="أخرى">📦 أخرى</option>
-            </select>
+            <label className="block text-gray-700 font-bold mb-2">السعر (ريال)</label>
+            <input required type="number" value={price} onChange={e => setPrice(e.target.value)} className="w-full p-4 border rounded-xl bg-gray-50 focus:bg-white focus:border-primary outline-none transition" placeholder="مثال: 150" />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">الحالة</label>
-            <select value={formData.condition} onChange={e => setFormData({...formData, condition: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 outline-none bg-white">
-              <option value="جديد">جديد</option>
-              <option value="مستعمل أخو الجديد">مستعمل أخو الجديد</option>
-              <option value="مستعمل">مستعمل</option>
-            </select>
+            <label className="block text-gray-700 font-bold mb-2">رقم الواتساب</label>
+            <input required type="text" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} className="w-full p-4 border rounded-xl bg-gray-50 focus:bg-white focus:border-primary outline-none transition" placeholder="05XXXXXXXX" dir="ltr" />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-2">الوصف</label>
-          <textarea required rows={4} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-300 outline-none resize-none"></textarea>
+          <label className="block text-gray-700 font-bold mb-2">الوصف</label>
+          <textarea required value={description} onChange={e => setDescription(e.target.value)} className="w-full p-4 border rounded-xl bg-gray-50 focus:bg-white focus:border-primary outline-none transition h-32" placeholder="اكتب تفاصيل السلعة ومميزاتها..."></textarea>
         </div>
 
-        <button type="submit" disabled={isSubmitting} className="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-[#0c3a6b] disabled:opacity-70 transition">
-          {isSubmitting ? "جاري النشر..." : "انشر الإعلان 🚀"}
-        </button>
+        <div>
+          <label className="block text-gray-700 font-bold mb-2">رابط الصورة (اختياري)</label>
+          <input type="text" value={imageUrl} onChange={e => setImageUrl(e.target.value)} className="w-full p-4 border rounded-xl bg-gray-50 focus:bg-white focus:border-primary outline-none transition" placeholder="ضع رابط الصورة هنا..." dir="ltr" />
+        </div>
+
+        <div className="flex gap-4 pt-4">
+          <button disabled={loading} type="submit" className="flex-1 bg-primary text-white font-bold py-4 rounded-xl hover:bg-[#0c3a6b] transition disabled:opacity-70">
+            {loading ? 'جاري النشر...' : 'نشر الإعلان 🚀'}
+          </button>
+          <Link href="/market" className="px-8 bg-gray-200 text-gray-700 font-bold py-4 rounded-xl hover:bg-gray-300 transition flex items-center justify-center">
+            إلغاء
+          </Link>
+        </div>
       </form>
     </div>
   );
