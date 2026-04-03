@@ -2,136 +2,98 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuthStore } from '@/store/authStore';
-import { useRouter } from 'next/navigation';
 
-function timeAgo(dateString: string) {
-  const diff = Math.floor((new Date().getTime() - new Date(dateString).getTime()) / 1000);
-  if (diff < 3600) return `منذ ${Math.floor(diff / 60)} دقيقة`;
-  if (diff < 86400) return `منذ ${Math.floor(diff / 3600)} ساعة`;
-  return `قبل ${Math.floor(diff / 86400)} يوم`;
-}
-
-export default function ItemDetailsPage({ params }: { params: { id: string } }) {
-  const [item, setItem] = useState<any>(null);
-  const [similarItems, setSimilarItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  
-  // استدعاء معلومات المستخدم والتوجيه
-  const { user } = useAuthStore();
+export default function AdDetailPage() {
+  const { id } = useParams();
   const router = useRouter();
+  const [item, setItem] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchItemAndSimilar() {
-      // جلب الإعلان الحالي
-      const { data: currentItem } = await supabase.from('listings').select('*').eq('id', params.id).single();
-      if (currentItem) {
-        setItem(currentItem);
-        // جلب 3 إعلانات مشابهة من نفس القسم
-        const { data: similar } = await supabase
-          .from('listings')
-          .select('*')
-          .eq('category', currentItem.category)
-          .neq('id', currentItem.id)
-          .limit(3);
-        if (similar) setSimilarItems(similar);
-      }
+    async function fetchItem() {
+      // ✅ تم التعديل إلى market_items هنا
+      const { data, error } = await supabase
+        .from('market_items') 
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (data) setItem(data);
       setLoading(false);
     }
-    fetchItemAndSimilar();
-  }, [params.id]);
+    if (id) fetchItem();
+  }, [id]);
 
-  // دالة التعامل مع ضغطة زر الواتساب (الإجبار على التسجيل)
-  const handleContactClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!user) {
-      alert("عشان نحميك ونحمي البائع، لازم تسجل دخول أولاً للتواصل!");
-      router.push('/login'); // تم التعديل إلى مسار تسجيل الدخول الصحيح
-      return;
-    }
-    // إذا مسجل، يفتح الواتساب مباشرة
-    window.open(`https://wa.me/966${item.whatsapp?.slice(1)}?text=بخصوص إعلانك: ${item.title}`, '_blank');
+  if (loading) return <div className="flex justify-center py-20"><div className="w-12 h-12 border-4 border-[#0f4c8a] border-t-transparent rounded-full animate-spin"></div></div>;
+
+  if (!item) return (
+    <div className="max-w-2xl mx-auto mt-20 text-center bg-white p-10 rounded-3xl shadow-sm border border-gray-100">
+      <span className="text-6xl block mb-4">🚫</span>
+      <h2 className="text-2xl font-bold text-[#0f4c8a] mb-4">الإعلان غير موجود أو تم حذفه</h2>
+      <button onClick={() => router.back()} className="bg-[#0f4c8a] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#0c3a6b]">العودة للسوق</button>
+    </div>
+  );
+
+  const getWhatsappLink = (whatsapp: string, title: string) => {
+    if (!whatsapp) return '#';
+    const whatsappNumber = whatsapp.startsWith('0') ? '966' + whatsapp.slice(1) : whatsapp;
+    return `https://wa.me/${whatsappNumber}?text=السلام عليكم، بخصوص إعلان (${title}) في السوق بمنصة IU Connect...`;
   };
 
-  if (loading) return <div className="text-center py-20 font-bold text-xl animate-pulse">جاري تحميل الإعلان...</div>;
-  if (!item) return <div className="text-center py-20 font-bold text-xl text-red-500">الإعلان غير موجود!</div>;
-
   return (
-    <div className="max-w-4xl mx-auto mt-4 pb-24">
-      
-      <Link href="/market" className="text-gray-500 font-bold hover:text-primary mb-4 inline-block">← العودة للسوق</Link>
+    <div className="max-w-4xl mx-auto px-4 py-10 mb-20 font-sans">
+      <button onClick={() => router.back()} className="mb-6 text-[#0f4c8a] font-bold flex items-center gap-2 hover:underline">
+         <span>➡️</span> العودة للسوق 
+      </button>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8">
-        {/* الصورة */}
-        <div className="w-full bg-black/5 aspect-video md:aspect-[21/9] flex items-center justify-center relative">
-          {item.image_url ? (
-            <img src={item.image_url} className="w-full h-full object-contain" />
-          ) : (
-            <span className="text-6xl">📦</span>
-          )}
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        
+        {/* صورة الإعلان */}
+        <div className="h-64 sm:h-96 bg-gray-50 flex items-center justify-center p-4 border-b border-gray-100 relative">
+           {item.image_url ? (
+              <img src={item.image_url} alt={item.title} className="max-w-full max-h-full object-contain" />
+           ) : (
+              <span className="text-8xl drop-shadow-md">📦</span>
+           )}
         </div>
 
-        {/* التفاصيل */}
-        <div className="p-6 md:p-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-6 mb-6">
+        {/* تفاصيل الإعلان */}
+        <div className="p-6 sm:p-10">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
             <div>
-              <h1 className="text-2xl md:text-4xl font-bold text-primary mb-2">{item.title}</h1>
-              <div className="flex gap-4 text-sm text-gray-500 font-medium">
-                <span>🕒 {timeAgo(item.created_at)}</span>
-                <span>📍 الجامعة الإسلامية</span>
-                <span className="bg-gray-100 px-2 py-0.5 rounded text-gray-600">{item.condition}</span>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0f4c8a] mb-3 leading-tight">{item.title}</h1>
+              <div className="flex flex-wrap gap-2 text-sm font-bold">
+                <span className="bg-gray-100 text-gray-700 border border-gray-200 px-3 py-1 rounded-lg">🏷️ {item.category}</span>
+                <span className="bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1 rounded-lg">✨ {item.condition || 'غير محدد'}</span>
               </div>
             </div>
-            <div className="text-3xl font-extrabold text-[#25D366] bg-green-50 px-6 py-3 rounded-xl border border-green-100">
+            <div className="bg-green-50 text-green-700 border border-green-200 px-6 py-3 rounded-2xl text-xl font-extrabold text-center min-w-[120px] w-full sm:w-auto">
               {item.price > 0 ? `${item.price} ريال` : 'على السوم'}
             </div>
           </div>
 
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-gray-800 mb-2">وصف الإعلان:</h3>
-            <p className="text-gray-700 leading-relaxed text-lg bg-gray-50 p-6 rounded-xl border border-gray-100 whitespace-pre-wrap">
-              {item.description}
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-3 bg-blue-50 text-blue-800 p-4 rounded-xl border border-blue-100 mb-8 font-bold">
-            <span className="text-2xl">👤</span>
-            المعلن: طالب من الجامعة الإسلامية ({item.user_id?.slice(0,4)})
+          <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100">
+            <h3 className="font-bold text-lg text-gray-800 mb-3 border-b pb-2">التفاصيل</h3>
+            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{item.description}</p>
           </div>
 
-          {/* زر الواتساب الذكي */}
-          <button 
-            onClick={handleContactClick}
-            className="flex items-center justify-center gap-3 w-full bg-[#25D366] text-white font-extrabold text-2xl py-5 rounded-2xl hover:bg-[#1ebd5a] transition-all shadow-xl shadow-green-200/50"
-          >
-            <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.82 9.82 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-            تواصل عبر واتساب
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-between items-center border-t border-gray-100 pt-6">
+             <div className="text-gray-400 font-medium text-sm flex items-center gap-2 w-full sm:w-auto">
+               <span>🕒</span> تاريخ النشر: {new Date(item.created_at).toLocaleDateString('ar-SA')}
+             </div>
+             
+             {item.whatsapp ? (
+                <a href={getWhatsappLink(item.whatsapp, item.title)} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-[#25D366] text-white px-10 py-3.5 rounded-xl font-bold text-lg hover:bg-green-600 transition flex items-center justify-center gap-2 shadow-md">
+                  تواصل واتساب 💬
+                </a>
+              ) : (
+                <span className="bg-gray-100 text-gray-500 px-8 py-3 rounded-xl font-bold w-full sm:w-auto text-center">لا يوجد رقم للتواصل</span>
+              )}
+          </div>
         </div>
       </div>
-
-      {/* قسم إعلانات مشابهة */}
-      {similarItems.length > 0 && (
-        <div>
-          <h3 className="text-xl font-bold text-primary mb-4">إعلانات مشابهة قد تهمك 🏷️</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {similarItems.map((sim) => (
-              <Link href={`/market/${sim.id}`} key={sim.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden group hover:shadow-md transition">
-                <div className="h-24 md:h-32 bg-gray-100 overflow-hidden relative">
-                  {sim.image_url ? <img src={sim.image_url} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" /> : <span className="flex items-center justify-center h-full text-2xl">📦</span>}
-                  <span className="absolute bottom-1 right-1 bg-black/60 text-white px-2 py-0.5 rounded text-[10px]">📸 1</span>
-                </div>
-                <div className="p-3">
-                  <h4 className="font-bold text-primary text-sm line-clamp-1">{sim.title}</h4>
-                  <div className="text-[#25D366] font-bold text-sm mt-1">{sim.price} ريال</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }
