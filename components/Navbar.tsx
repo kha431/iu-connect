@@ -14,6 +14,11 @@ export default function Navbar() {
   const clearUser = useAuthStore((state: any) => state.clearUser);
   const [mounted, setMounted] = useState(false);
 
+  // ✨ سحب إيميل المدير من الخزنة السرية
+  const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  // التحقق هل المستخدم الحالي هو المدير؟
+  const isAdmin = user && user.email === ADMIN_EMAIL;
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -60,6 +65,13 @@ export default function Navbar() {
             <div className="w-24 h-10"></div>
           ) : user ? (
             <>
+              {/* 👑 الزر السري للمدير (يظهر لك أنت بس) */}
+              {isAdmin && (
+                <Link href="/admin" className="flex items-center gap-1 sm:gap-2 bg-[#fbc02d]/20 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-[#fbc02d]/50 hover:bg-[#fbc02d]/30 transition">
+                  <span className={`font-bold text-sm sm:text-base ${isActive('/admin') ? 'text-white' : 'text-[#fbc02d]'}`}>👑 الإدارة</span>
+                </Link>
+              )}
+
               <Link href="/profile" className="flex items-center gap-1.5 sm:gap-2.5 bg-white/10 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-white/10 hover:bg-white/15 transition group">
                 <span className={`font-bold text-sm sm:text-lg ${isActive('/profile') ? 'text-[#fbc02d]' : 'text-white'}`}>إعلاناتي</span>
               </Link>
