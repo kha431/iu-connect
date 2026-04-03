@@ -24,7 +24,8 @@ export default function MarketPage() {
 
   useEffect(() => {
     async function fetchItems() {
-      const { data } = await supabase.from('listings').select('*').order('created_at', { ascending: false });
+      // ✅ التعديل الوحيد هنا: غيرنا listings إلى market_items
+      const { data } = await supabase.from('market_items').select('*').order('created_at', { ascending: false });
       if (data) setItems(data);
       setLoading(false);
     }
@@ -39,8 +40,8 @@ export default function MarketPage() {
 
     // نقسم كلمات البحث ونبحث عن كل كلمة لحالها في العنوان أو الوصف
     const searchWords = normalizeText(searchTerm).split(' ').filter(w => w);
-    const itemTitle = normalizeText(item.title);
-    const itemDesc = normalizeText(item.description);
+    const itemTitle = normalizeText(item.title || '');
+    const itemDesc = normalizeText(item.description || '');
 
     const matchesSearch = searchWords.every(word => itemTitle.includes(word) || itemDesc.includes(word));
     
@@ -64,7 +65,7 @@ export default function MarketPage() {
         <div className="flex gap-2">
           <input 
             type="text" 
-            placeholder="ابحث عن السلعة... (بحث ذكي)" 
+            placeholder="ابحث عن غرضك... " 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-primary transition text-lg"
@@ -122,7 +123,7 @@ export default function MarketPage() {
                   
                   <div className="mt-auto flex justify-between items-end text-xs text-gray-500 font-medium">
                     <div className="space-y-1">
-                      <div className="flex items-center gap-1"><span>👤</span> طالب ({item.user_id?.slice(0, 4)})</div>
+                      <div className="flex items-center gap-1"><span>👤</span> طالب ({item.user_id?.slice(0, 4) || 'جديد'})</div>
                       <div className="flex items-center gap-1 text-gray-400"><span>📍</span> الجامعة الإسلامية</div>
                     </div>
                     <div className="text-left">

@@ -124,13 +124,13 @@ export default function NewLostFoundPage() {
           <label className="flex-1 text-center cursor-pointer">
             <input type="radio" value="lost" {...register("type")} className="hidden peer" />
             <div className="py-2 rounded-lg peer-checked:bg-red-50 peer-checked:text-red-700 peer-checked:border-red-200 peer-checked:shadow-sm transition-all font-bold text-gray-500 border border-transparent">
-              💔 مفقود (ضيعت شيء)
+               مفقود (ضيعت شيء)
             </div>
           </label>
           <label className="flex-1 text-center cursor-pointer">
             <input type="radio" value="found" {...register("type")} className="hidden peer" />
             <div className="py-2 rounded-lg peer-checked:bg-green-50 peer-checked:text-green-700 peer-checked:border-green-200 peer-checked:shadow-sm transition-all font-bold text-gray-500 border border-transparent">
-              🎁 موجود (لقيت شيء)
+               موجود (لقيت شيء)
             </div>
           </label>
         </div>
