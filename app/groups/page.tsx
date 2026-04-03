@@ -17,6 +17,18 @@ export default function GroupsPage() {
   // ✨ حالة جديدة لشريط البحث الذكي
   const [searchTerm, setSearchTerm] = useState('');
 
+  // 💡 الجاسوس الحميد: كود تتبع سلوك المستخدمين لمعرفة احتياجاتهم
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      // إذا كتب أكثر من حرفين، احفظ الكلمة في قاعدة البيانات بصمت
+      if (searchTerm.trim().length > 2) {
+        await supabase.from('search_logs').insert([{ term: searchTerm.trim() }]);
+      }
+    }, 1500); // ينتظر ثانية ونص بعد وقوف الطالب عن الكتابة عشان ما يرسل كل حرف
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+
   useEffect(() => {
     const savedJoinedGroups = localStorage.getItem('iu_joined_groups');
     if (savedJoinedGroups) {
@@ -194,7 +206,7 @@ export default function GroupsPage() {
             <div className="mt-8 pt-6 border-t">
               {joinedGroupIds.includes(selectedGroup.id) ? (
                  <div className="w-full bg-green-50 text-green-700 py-4 rounded-xl font-bold text-lg text-center border border-green-200">
-                    ✅ أنت منضم وموجود في القائمة
+                   ✅ أنت منضم وموجود في القائمة
                  </div>
               ) : showJoinInput ? (
                 <form onSubmit={handleConfirmJoin} className="flex gap-2">
