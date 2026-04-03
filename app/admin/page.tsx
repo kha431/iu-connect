@@ -11,8 +11,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState({ market: 0, groups: 0, lost: 0 });
 
   // 🔴🔴 غيّر هذا الإيميل وحط إيميلك الشخصي اللي مسجل فيه بالموقع!
-  const ADMIN_EMAIL = "k8235411@gmail.com";
-
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
   useEffect(() => {
     async function checkAdmin() {
       const { data: { user } } = await supabase.auth.getUser();
