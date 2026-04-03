@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
@@ -8,15 +8,40 @@ import Link from 'next/link';
 export default function NewGroupPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  
+  // 💡 السحر الأول: متغير لحفظ الـ ID حقك
+  const [userId, setUserId] = useState<string | null>(null);
+  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     whatsapp: '',
   });
 
+  // 💡 السحر الثاني: دالة تشتغل أول ما تفتح الصفحة عشان تتأكد إنك مسجل دخول وتسحب الـ ID
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      } else {
+        alert("يجب تسجيل الدخول أولاً لإنشاء مجموعة");
+        router.push('/login');
+      }
+    };
+    checkUser();
+  }, [router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    // حماية إضافية لو طار تسجيل الدخول فجأة
+    if (!userId) {
+      alert("حدث خطأ في المصادقة، يرجى تسجيل الدخول مجدداً");
+      setLoading(false);
+      return;
+    }
 
     const { data, error } = await supabase
       .from('groups')
@@ -25,15 +50,15 @@ export default function NewGroupPage() {
           title: formData.title, 
           description: formData.description, 
           whatsapp: formData.whatsapp,
-          type: 'other', // 💡 السحر هنا: غيرناها لكلمة (other) عشان يقبلها السيرفر وهو يضحك
+          type: 'other', 
           participants: 1, 
-          joined_numbers: [] 
+          joined_numbers: [],
+          user_id: userId // 💡 السحر الثالث والأهم: ختمنا الإعلان باسمك ورقمك هنا!
         }
       ]);
 
     if (error) {
       console.error("تفاصيل الخطأ:", error);
-      // 💡 وهنا خلينا رسالة التنبيه تطبع لك الخطأ الحقيقي من السيرفر عشان ما نتوه
       alert("رفض السيرفر الإنشاء والسبب: " + error.message);
       setLoading(false);
     } else {
@@ -43,7 +68,7 @@ export default function NewGroupPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12 mb-20">
+    <div className="max-w-3xl mx-auto px-4 py-12 mb-20 font-sans">
       <div className="mb-8">
         <Link href="/groups" className="text-[#0f4c8a] font-bold flex items-center gap-2 hover:underline">
           <span>➡️</span> العودة للمجموعات
