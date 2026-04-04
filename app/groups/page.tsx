@@ -4,6 +4,34 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
+// ⏱️ دالة حساب الوقت (منذ كم دقيقة/ساعة)
+function formatTimeAgo(dateString: string) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return 'منذ لحظات';
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes === 1) return 'منذ دقيقة';
+  if (diffInMinutes === 2) return 'منذ دقيقتين';
+  if (diffInMinutes < 11) return `منذ ${diffInMinutes} دقائق`;
+  if (diffInMinutes < 60) return `منذ ${diffInMinutes} دقيقة`;
+  
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours === 1) return 'منذ ساعة';
+  if (diffInHours === 2) return 'منذ ساعتين';
+  if (diffInHours < 11) return `منذ ${diffInHours} ساعات`;
+  if (diffInHours < 24) return `منذ ${diffInHours} ساعة`;
+  
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays === 1) return 'منذ يوم';
+  if (diffInDays === 2) return 'منذ يومين';
+  if (diffInDays < 11) return `منذ ${diffInDays} أيام`;
+  if (diffInDays < 30) return `منذ ${diffInDays} يوم`;
+  
+  return date.toLocaleDateString('ar-SA'); // إذا مر أكثر من شهر، يعرض التاريخ العادي
+}
+
 export default function GroupsPage() {
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
   const [groups, setGroups] = useState<any[]>([]);
@@ -150,7 +178,10 @@ export default function GroupsPage() {
                   ) : (
                     <button className="bg-green-500 text-white font-bold px-6 py-2 rounded-xl text-sm hover:bg-green-600 transition shadow-sm flex items-center gap-1">انضمام 🤝</button>
                   )}
-                  <span className="text-gray-400 text-sm font-medium">{new Date(group.created_at).toLocaleDateString('ar-SA')}</span>
+                  {/* 🕒 هنا تم استدعاء دالة الوقت الجديدة */}
+                  <span className="text-gray-400 text-sm font-bold flex items-center gap-1">
+                    🕒 {formatTimeAgo(group.created_at)}
+                  </span>
                 </div>
               </div>
             );
