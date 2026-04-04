@@ -14,17 +14,14 @@ export default function GroupsPage() {
   const [myNumber, setMyNumber] = useState('');
   const [isJoining, setIsJoining] = useState(false);
 
-  // ✨ حالة جديدة لشريط البحث الذكي
   const [searchTerm, setSearchTerm] = useState('');
 
-  // 💡 الجاسوس الحميد: كود تتبع سلوك المستخدمين لمعرفة احتياجاتهم
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
-      // إذا كتب أكثر من حرفين، احفظ الكلمة في قاعدة البيانات بصمت
       if (searchTerm.trim().length > 2) {
         await supabase.from('search_logs').insert([{ term: searchTerm.trim() }]);
       }
-    }, 1500); // ينتظر ثانية ونص بعد وقوف الطالب عن الكتابة عشان ما يرسل كل حرف
+    }, 1500);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
@@ -82,7 +79,6 @@ export default function GroupsPage() {
     }
   };
 
-  // ✨ دالة التصفية (البحث الذكي)
   const filteredGroups = groups.filter((group) => {
     const searchLower = searchTerm.toLowerCase();
     return (
@@ -94,12 +90,10 @@ export default function GroupsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-20">
       
-      {/* البانر */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8 flex flex-col md:flex-row justify-between items-center relative overflow-hidden gap-6">
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-100 via-blue-50 to-purple-100"></div>
         <div className="text-right flex-1 pt-2">
           <h1 className="text-2xl md:text-3xl font-extrabold text-[#1e3264] mb-2">المجموعات الطلابية 👥</h1>
-          {/* ✅ تم تعديل النص هنا بناءً على طلبك */}
           <p className="text-gray-500 text-sm md:text-base leading-relaxed">ابحث عن أي شيء تحتاجه.. قروب مذاكرة، مشاوير مثل تبغى ترجع من وإلى الجامعة وتشوف أحد معاك يجي، تشتركوا في غسالة أو غرض، أو حتى ترفيه!</p>
         </div>
         <div className="w-full md:w-auto">
@@ -109,7 +103,6 @@ export default function GroupsPage() {
         </div>
       </div>
 
-      {/* ✨ شريط البحث الذكي ✨ */}
       <div className="mb-8">
         <div className="relative max-w-2xl mx-auto">
           <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -117,7 +110,6 @@ export default function GroupsPage() {
           </div>
           <input
             type="text"
-            {/* ✅ تم استبدال "مشروع تخرج" بـ "غسالة" هنا */}
             placeholder="ابحث عن مجموعة.. (مثال: كرة طائرة، غسالة، مشوار)"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -136,7 +128,6 @@ export default function GroupsPage() {
            </h2>
         </div>
       ) : (
-        /* الكروت */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredGroups.map((group) => {
             const isJoined = joinedGroupIds.includes(group.id);
@@ -167,7 +158,6 @@ export default function GroupsPage() {
         </div>
       )}
 
-      {/* النافذة المنبثقة */}
       {selectedGroup && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl">
