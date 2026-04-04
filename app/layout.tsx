@@ -1,6 +1,7 @@
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import AuthProvider from '@/components/AuthProvider';
+import { Analytics } from '@vercel/analytics/react'; // 👈 1. هذا السطر الأول اللي أضفناه للإحصائيات
 
 export const metadata = {
   title: 'IU Connect',
@@ -54,6 +55,7 @@ export default function RootLayout({
             {children}
           </main>
         </AuthProvider>
+        <Analytics /> {/* 👈 2. وهذا السطر الثاني اللي أضفناه تحت */}
       </body>
     </html>
   );
