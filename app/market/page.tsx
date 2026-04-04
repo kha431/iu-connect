@@ -22,6 +22,18 @@ export default function MarketPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("الكل");
 
+  // ✨ الجاسوس الحميد (مراقبة بحث السوق)
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      // إذا كتب أكثر من حرفين، احفظ الكلمة في قاعدة البيانات بصمت
+      if (searchTerm.trim().length > 2) {
+        await supabase.from('search_logs').insert([{ term: searchTerm.trim() }]);
+      }
+    }, 1500); // ينتظر ثانية ونص بعد وقوف الطالب عن الكتابة
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+
   useEffect(() => {
     async function fetchItems() {
       // ✅ التعديل الوحيد هنا: غيرنا listings إلى market_items
