@@ -99,7 +99,8 @@ export default function GroupsPage() {
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-100 via-blue-50 to-purple-100"></div>
         <div className="text-right flex-1 pt-2">
           <h1 className="text-2xl md:text-3xl font-extrabold text-[#1e3264] mb-2">المجموعات الطلابية 👥</h1>
-          <p className="text-gray-500 text-sm md:text-base">ابحث عن أي شيء تحتاجه.. قروب مذاكرة، توصيلة، قطة عشاء، أو حتى ترفيه!</p>
+          {/* ✅ تم تعديل النص هنا بناءً على طلبك */}
+          <p className="text-gray-500 text-sm md:text-base leading-relaxed">ابحث عن أي شيء تحتاجه.. قروب مذاكرة، مشاوير مثل تبغى ترجع من وإلى الجامعة وتشوف أحد معاك يجي، تشتركوا في غسالة أو غرض، أو حتى ترفيه!</p>
         </div>
         <div className="w-full md:w-auto">
           <Link href="/groups/new" className="bg-[#cca01d] text-white px-8 py-3.5 rounded-xl font-bold hover:bg-[#b38b17] transition shadow-md w-full md:w-auto text-center inline-block text-lg">
@@ -116,7 +117,8 @@ export default function GroupsPage() {
           </div>
           <input
             type="text"
-            placeholder="ابحث عن مجموعة.. (مثال: كرة طائرة، مشروع تخرج، مشوار)"
+            {/* ✅ تم استبدال "مشروع تخرج" بـ "غسالة" هنا */}
+            placeholder="ابحث عن مجموعة.. (مثال: كرة طائرة، غسالة، مشوار)"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full p-4 pr-12 rounded-2xl border border-gray-200 focus:border-[#0f4c8a] focus:ring-2 focus:ring-[#0f4c8a]/20 outline-none transition shadow-sm text-gray-700 bg-white"
