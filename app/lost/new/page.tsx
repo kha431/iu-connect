@@ -36,8 +36,9 @@ export default function NewLostFoundPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        alert("حجم الصورة كبير جداً! الحد الأقصى هو 2 ميجابايت.");
+      // ✅ تم التعديل هنا: الحد الأقصى 500 كيلوبايت
+      if (file.size > 500 * 1024) {
+        alert("حجم الصورة كبير جداً! الحد الأقصى هو 500 كيلوبايت.");
         return;
       }
       setImageFile(file);
