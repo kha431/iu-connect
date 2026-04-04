@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
-// مترجم لحالة العنصر 
+// مترجم لحالة العنصر (بدون إيموجيات)
 const statusTranslator: Record<string, string> = {
-  lost: "مفقود 💔",
-  found: "موجود (لقيته) 💡"
+  lost: "مفقود",
+  found: "معثور عليه"
 };
 
 export default function LostAndFoundPage() {
@@ -18,7 +18,6 @@ export default function LostAndFoundPage() {
 
   useEffect(() => {
     const fetchItems = async () => {
-      // ✅ تم استخدام اسم الجدول الصحيح
       const { data, error } = await supabase
         .from('lost_found') 
         .select('*')
@@ -39,7 +38,7 @@ export default function LostAndFoundPage() {
     return title.toLowerCase().includes(searchLower) || description.toLowerCase().includes(searchLower);
   });
 
-  // دالة تضبيط رقم الواتساب (من كودك الأصلي)
+  // دالة تضبيط رقم الواتساب 
   const getWhatsappLink = (whatsapp: string, title: string) => {
     if (!whatsapp) return '#';
     const whatsappNumber = whatsapp.startsWith('0') ? '966' + whatsapp.slice(1) : whatsapp;
@@ -54,7 +53,8 @@ export default function LostAndFoundPage() {
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-100 via-orange-50 to-red-100"></div>
         <div className="text-right flex-1 pt-2">
           <h1 className="text-2xl md:text-3xl font-extrabold text-[#1e3264] mb-2">المفقودات والموجودات 🔍</h1>
-          <p className="text-gray-500 text-sm md:text-base">ضيعت شيء غالي عليك؟ أو لقيت شيء مو لك؟ أعلن هنا وخلنا نتعاون نرجعه لصاحبه.</p>
+          {/* ✅ تم تعديل النص وحذف كلمة "غالي" */}
+          <p className="text-gray-500 text-sm md:text-base">ضيعت شيء؟ أو لقيت شيء مو لك؟ أعلن هنا وخلنا نتعاون نرجعه لصاحبه.</p>
         </div>
         <div className="w-full md:w-auto">
           <Link href="/lost/new" className="bg-[#cca01d] text-white px-8 py-3.5 rounded-xl font-bold hover:bg-[#b38b17] transition shadow-md w-full md:w-auto text-center inline-block text-lg">
@@ -98,21 +98,20 @@ export default function LostAndFoundPage() {
             <div 
               key={item.id} 
               className="bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg transition duration-300 transform hover:-translate-y-1 flex flex-col h-full relative overflow-hidden group-card cursor-pointer"
-              onClick={() => setSelectedItem(item)} // ✅ إرجاع ميزة النافذة المنبثقة
+              onClick={() => setSelectedItem(item)}
             >
-              {/* ✅ حل مشكلة الصور المقصوصة (استخدام object-contain بدلاً من cover) */}
               <div className="h-52 bg-white border-b border-gray-100 flex items-center justify-center relative p-4 overflow-hidden">
                 {item.image_url ? (
                   <img src={item.image_url} alt={item.title} className="max-w-full max-h-full object-contain hover:scale-105 transition duration-500" />
                 ) : (
                   <span className="text-6xl drop-shadow-md">{isLost ? '❓' : '🎁'}</span>
                 )}
-                {/* شريط الحالة */}
+                {/* ✅ تم إزالة الإيموجيات من شريط الحالة */}
                 <div className={`absolute top-4 right-4 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm backdrop-blur-md ${
                   item.is_resolved ? 'bg-gray-800 text-white border border-gray-700' : 
                   isLost ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-green-50 text-green-700 border border-green-200'
                 }`}>
-                  {item.is_resolved ? '✅ تم الحل' : isLost ? 'مفقود 💔' : 'معثور عليه 💡'}
+                  {item.is_resolved ? 'تم الحل' : isLost ? 'مفقود' : 'معثور عليه'}
                 </div>
               </div>
               
@@ -158,7 +157,6 @@ export default function LostAndFoundPage() {
               ✕
             </button>
             
-            {/* عرض الصورة كاملة داخل النافذة */}
             {selectedItem.image_url && (
                <div className="w-full h-72 bg-white flex items-center justify-center p-4 border-b">
                  <img src={selectedItem.image_url} alt={selectedItem.title} className="max-w-full max-h-full object-contain" />
@@ -167,13 +165,14 @@ export default function LostAndFoundPage() {
 
             <div className="p-8">
               <div className="flex gap-3 mb-6 flex-wrap">
+                {/* ✅ تم إزالة الإيموجيات من حالة النافذة المنبثقة */}
                 <span className={`font-bold px-3 py-1 rounded-lg text-sm border ${
                     selectedItem.is_resolved ? 'bg-gray-100 text-gray-700 border-gray-200' :
                     selectedItem.type === 'lost' 
                       ? 'bg-red-50 text-red-700 border-red-100' 
                       : 'bg-green-50 text-green-700 border-green-100'
                   }`}>
-                  {selectedItem.is_resolved ? '✅ تم إرجاع المفقود' : statusTranslator[selectedItem.type] || 'إعلان'}
+                  {selectedItem.is_resolved ? 'تم إرجاع المفقود' : statusTranslator[selectedItem.type] || 'إعلان'}
                 </span>
                 {selectedItem.location && (
                   <span className="bg-gray-100 text-gray-600 font-bold px-3 py-1 text-sm rounded-lg border border-gray-200">
