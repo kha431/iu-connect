@@ -14,7 +14,7 @@ export default function NewMarketAdPage() {
     description: '',
     price: '',
     whatsapp: '',
-    category: 'حراج الأجهزة',
+    category: 'المحلات التجارية', // 👈 خليناه الخيار الافتراضي لأنه الأهم الآن
     condition: 'مستعمل',
   });
   
@@ -80,7 +80,7 @@ export default function NewMarketAdPage() {
           category: formData.category,
           condition: formData.condition,
           whatsapp: formData.whatsapp,
-          image_url: finalImageUrl, // 👈 هنا نرسل رابط الصورة الفعلي
+          image_url: finalImageUrl, 
           user_id: userId
         }
       ]);
@@ -180,6 +180,8 @@ export default function NewMarketAdPage() {
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
               >
+                {/* 🌟 رتبنا الأقسام هنا عشان تطابق الفلتر اللي سويناه */}
+                <option value="المحلات التجارية">المحلات التجارية 🏪</option>
                 <option value="حراج الكتب">حراج الكتب 📚</option>
                 <option value="السيارات والدراجات">السيارات والدراجات 🚗</option>
                 <option value="حراج الأجهزة">حراج الأجهزة 💻</option>

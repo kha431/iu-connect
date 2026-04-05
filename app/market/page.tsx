@@ -36,7 +36,6 @@ export default function MarketPage() {
 
   useEffect(() => {
     async function fetchItems() {
-      // ✅ التعديل الوحيد هنا: غيرنا listings إلى market_items
       const { data } = await supabase.from('market_items').select('*').order('created_at', { ascending: false });
       if (data) setItems(data);
       setLoading(false);
@@ -62,6 +61,7 @@ export default function MarketPage() {
 
   const categories = [
     "الكل", 
+    "المحلات التجارية", // 👈 نقلناه هنا عشان يكون الثاني مباشرة
     "حراج الكتب", 
     "السيارات والدراجات والسكوترات", 
     "حراج الأجهزة", 
