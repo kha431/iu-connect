@@ -14,7 +14,7 @@ export default function NewMarketAdPage() {
     description: '',
     price: '',
     whatsapp: '',
-    category: 'المحلات التجارية', // 👈 خليناه الخيار الافتراضي لأنه الأهم الآن
+    category: 'حراج الكتب', // ✅ تم تعديل الخيار الافتراضي
     condition: 'مستعمل',
   });
   
@@ -45,13 +45,11 @@ export default function NewMarketAdPage() {
 
     let finalImageUrl = '';
 
-    // ✅ السحر هنا: كود رفع الصورة إلى Supabase
     if (imageFile) {
       const fileExt = imageFile.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${userId}/${fileName}`;
 
-      // ⚠️ افترضت إن مجلد الصور عندك في Supabase اسمه images
       const { error: uploadError } = await supabase.storage
         .from('images') 
         .upload(filePath, imageFile);
@@ -76,6 +74,7 @@ export default function NewMarketAdPage() {
         { 
           title: formData.title, 
           description: formData.description, 
+          // ✅ السعر هنا إذا كان فاضي بينحفظ كـ 0 (يعني على السوم)
           price: parseFloat(formData.price) || 0,
           category: formData.category,
           condition: formData.condition,
@@ -148,10 +147,11 @@ export default function NewMarketAdPage() {
           {/* السعر والواتساب */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[#0f4c8a] font-bold mb-2 text-sm">السعر (0 = على السوم)</label>
+              {/* ✅ تم إزالة required من هنا، وتوضيح أنه اختياري */}
+              <label className="block text-[#0f4c8a] font-bold mb-2 text-sm">السعر (اختياري - اتركه فارغاً للسوم)</label>
               <input
                 type="number"
-                required
+                placeholder="مثال: 50"
                 className="w-full p-3 rounded-lg border border-gray-200 outline-none focus:border-[#0f4c8a] transition"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
@@ -180,10 +180,9 @@ export default function NewMarketAdPage() {
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
               >
-                {/* 🌟 رتبنا الأقسام هنا عشان تطابق الفلتر اللي سويناه */}
-                <option value="المحلات التجارية">المحلات التجارية 🏪</option>
+                {/* ✅ تم حذف المحلات التجارية من هنا */}
                 <option value="حراج الكتب">حراج الكتب 📚</option>
-                <option value="السيارات والدراجات">السيارات والدراجات 🚗</option>
+                <option value="السيارات والدراجات والسكوترات">السيارات والدراجات والسكوترات 🚗</option>
                 <option value="حراج الأجهزة">حراج الأجهزة 💻</option>
                 <option value="حراج الأثاث">حراج الأثاث 🛏️</option>
                 <option value="مستلزمات شخصية">مستلزمات شخصية 👔</option>

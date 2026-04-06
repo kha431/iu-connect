@@ -11,7 +11,7 @@ function timeAgo(dateString: string) {
   return `قبل ${Math.floor(diff / 86400)} يوم`;
 }
 
-// دالة لتنظيف النص العربي (عشان البحث يصير دقيق وما يفرق بين أ و ا أو ة و هـ)
+// دالة لتنظيف النص العربي
 const normalizeText = (text: string) => {
   return text.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase();
 };
@@ -29,7 +29,7 @@ export default function MarketPage() {
       if (searchTerm.trim().length > 2) {
         await supabase.from('search_logs').insert([{ term: searchTerm.trim() }]);
       }
-    }, 1500); // ينتظر ثانية ونص بعد وقوف الطالب عن الكتابة
+    }, 1500);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
@@ -49,7 +49,6 @@ export default function MarketPage() {
     
     if (!searchTerm) return matchesCategory;
 
-    // نقسم كلمات البحث ونبحث عن كل كلمة لحالها في العنوان أو الوصف
     const searchWords = normalizeText(searchTerm).split(' ').filter(w => w);
     const itemTitle = normalizeText(item.title || '');
     const itemDesc = normalizeText(item.description || '');
@@ -59,9 +58,9 @@ export default function MarketPage() {
     return matchesCategory && matchesSearch;
   });
 
+  // ✅ تم حذف المحلات التجارية من هنا
   const categories = [
     "الكل", 
-    "المحلات التجارية", // 👈 نقلناه هنا عشان يكون الثاني مباشرة
     "حراج الكتب", 
     "السيارات والدراجات والسكوترات", 
     "حراج الأجهزة", 
