@@ -211,7 +211,10 @@ export default function GroupsPage() {
                 <div className="flex justify-between items-center bg-blue-50 p-4 rounded-xl border border-blue-100">
                   <span className="font-bold text-[#0f4c8a]">👑 المنشئ الأساسي</span>
                   {selectedGroup.whatsapp ? (
-                    <a href={`https://wa.me/${selectedGroup.whatsapp}`} target="_blank" rel="noopener noreferrer" className="bg-[#25D366] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-600 transition flex items-center gap-2">مراسلة 💬</a>
+                    <a href={`https://wa.me/${selectedGroup.whatsapp}`} target="_blank" rel="noopener noreferrer" className="bg-[#25D366] text-white px-4 py-2 rounded-lg font-bold hover:bg-green-600 transition flex flex-col items-center gap-1">
+                      <span className="text-sm flex items-center gap-1">مراسلة 💬</span>
+                      <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full tracking-widest" dir="ltr">{selectedGroup.whatsapp}</span>
+                    </a>
                   ) : (
                     <span className="text-gray-400 text-sm">لا يوجد رقم</span>
                   )}
@@ -220,7 +223,10 @@ export default function GroupsPage() {
                 {selectedGroup.joined_numbers && selectedGroup.joined_numbers.map((num: string, index: number) => (
                   <div key={index} className="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
                     <span className="font-bold text-gray-700">👤 زميل منضم ({index + 1})</span>
-                    <a href={`https://wa.me/${num}`} target="_blank" rel="noopener noreferrer" className="text-[#25D366] px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-50 transition border border-[#25D366] flex items-center gap-2">مراسلة 💬</a>
+                    <a href={`https://wa.me/${num}`} target="_blank" rel="noopener noreferrer" className="text-[#25D366] px-4 py-2 rounded-lg font-bold hover:bg-green-50 transition border border-[#25D366] flex flex-col items-center gap-1">
+                      <span className="text-sm flex items-center gap-1">مراسلة 💬</span>
+                      <span className="text-xs bg-[#25D366]/10 px-2 py-0.5 rounded-full text-gray-600 tracking-widest" dir="ltr">{num}</span>
+                    </a>
                   </div>
                 ))}
               </div>

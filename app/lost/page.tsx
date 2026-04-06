@@ -200,9 +200,10 @@ export default function LostAndFoundPage() {
                       href={getWhatsappLink(selectedItem.whatsapp, selectedItem.title)} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="bg-[#25D366] text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-green-600 transition flex items-center gap-2 shadow-sm"
+                      className="bg-[#25D366] text-white px-5 py-2 rounded-lg font-bold hover:bg-green-600 transition flex flex-col items-center gap-1 shadow-sm"
                     >
-                      تواصل واتساب 💬
+                      <span className="flex items-center gap-2 text-sm">تواصل واتساب 💬</span>
+                      <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full tracking-widest" dir="ltr">{selectedItem.whatsapp}</span>
                     </a>
                   ) : (
                     <span className="text-gray-400 text-sm font-bold bg-gray-100 px-4 py-2 rounded-lg border border-gray-200">لا يوجد رقم للتواصل</span>

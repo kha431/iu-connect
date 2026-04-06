@@ -85,8 +85,9 @@ export default function AdDetailPage() {
              </div>
              
              {item.whatsapp ? (
-                <a href={getWhatsappLink(item.whatsapp, item.title)} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-[#25D366] text-white px-10 py-3.5 rounded-xl font-bold text-lg hover:bg-green-600 transition flex items-center justify-center gap-2 shadow-md">
-                  تواصل واتساب 💬
+                <a href={getWhatsappLink(item.whatsapp, item.title)} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-[#25D366] text-white px-8 py-3.5 rounded-xl font-bold text-lg hover:bg-green-600 transition flex flex-col items-center justify-center gap-1 shadow-md">
+                  <span className="flex items-center gap-2">تواصل واتساب 💬</span>
+                  <span className="text-sm bg-white/20 px-3 py-1 rounded-full w-full text-center tracking-widest" dir="ltr">{item.whatsapp}</span>
                 </a>
               ) : (
                 <span className="bg-gray-100 text-gray-500 px-8 py-3 rounded-xl font-bold w-full sm:w-auto text-center">لا يوجد رقم للتواصل</span>
