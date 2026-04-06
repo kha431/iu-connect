@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 export default function AdDetailPage() {
   const { id } = useParams();
@@ -13,7 +12,6 @@ export default function AdDetailPage() {
 
   useEffect(() => {
     async function fetchItem() {
-      // ✅ تم التعديل إلى market_items هنا
       const { data, error } = await supabase
         .from('market_items') 
         .select('*')
@@ -50,7 +48,6 @@ export default function AdDetailPage() {
 
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         
-        {/* صورة الإعلان */}
         <div className="h-64 sm:h-96 bg-gray-50 flex items-center justify-center p-4 border-b border-gray-100 relative">
            {item.image_url ? (
               <img src={item.image_url} alt={item.title} className="max-w-full max-h-full object-contain" />
@@ -59,7 +56,6 @@ export default function AdDetailPage() {
            )}
         </div>
 
-        {/* تفاصيل الإعلان */}
         <div className="p-6 sm:p-10">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
             <div>
@@ -69,9 +65,11 @@ export default function AdDetailPage() {
                 <span className="bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1 rounded-lg">✨ {item.condition || 'غير محدد'}</span>
               </div>
             </div>
-            <div className="bg-green-50 text-green-700 border border-green-200 px-6 py-3 rounded-2xl text-xl font-extrabold text-center min-w-[120px] w-full sm:w-auto">
-              {item.price > 0 ? `${item.price} ريال` : 'على السوم'}
-            </div>
+            {item.price > 0 && (
+              <div className="bg-green-50 text-green-700 border border-green-200 px-6 py-3 rounded-2xl text-xl font-extrabold text-center min-w-[120px] w-full sm:w-auto">
+                {item.price} ريال
+              </div>
+            )}
           </div>
 
           <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100">

@@ -14,7 +14,7 @@ export default function NewMarketAdPage() {
     description: '',
     price: '',
     whatsapp: '',
-    category: 'حراج الكتب', // ✅ تم تعديل الخيار الافتراضي
+    category: 'حراج الكتب',
     condition: 'مستعمل',
   });
   
@@ -74,7 +74,6 @@ export default function NewMarketAdPage() {
         { 
           title: formData.title, 
           description: formData.description, 
-          // ✅ السعر هنا إذا كان فاضي بينحفظ كـ 0 (يعني على السوم)
           price: parseFloat(formData.price) || 0,
           category: formData.category,
           condition: formData.condition,
@@ -104,7 +103,6 @@ export default function NewMarketAdPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           
-          {/* صورة الإعلان */}
           <div>
             <label className="block text-[#0f4c8a] font-bold mb-2 text-sm">صورة الإعلان</label>
             <label className="border-2 border-dashed border-[#0f4c8a]/30 bg-blue-50/30 rounded-xl p-6 flex flex-col justify-center items-center cursor-pointer hover:bg-blue-50 transition w-full h-32 relative overflow-hidden">
@@ -132,7 +130,6 @@ export default function NewMarketAdPage() {
             </label>
           </div>
 
-          {/* عنوان الإعلان */}
           <div>
             <label className="block text-[#0f4c8a] font-bold mb-2 text-sm">عنوان الإعلان</label>
             <input
@@ -144,11 +141,9 @@ export default function NewMarketAdPage() {
             />
           </div>
 
-          {/* السعر والواتساب */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              {/* ✅ تم إزالة required من هنا، وتوضيح أنه اختياري */}
-              <label className="block text-[#0f4c8a] font-bold mb-2 text-sm">السعر (اختياري - اتركه فارغاً للسوم)</label>
+              <label className="block text-[#0f4c8a] font-bold mb-2 text-sm">السعر (اختياري)</label>
               <input
                 type="number"
                 placeholder="مثال: 50"
@@ -171,7 +166,6 @@ export default function NewMarketAdPage() {
             </div>
           </div>
 
-          {/* القسم والحالة */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-[#0f4c8a] font-bold mb-2 text-sm">القسم</label>
@@ -180,7 +174,6 @@ export default function NewMarketAdPage() {
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
               >
-                {/* ✅ تم حذف المحلات التجارية من هنا */}
                 <option value="حراج الكتب">حراج الكتب 📚</option>
                 <option value="السيارات والدراجات والسكوترات">السيارات والدراجات والسكوترات 🚗</option>
                 <option value="حراج الأجهزة">حراج الأجهزة 💻</option>
@@ -204,7 +197,6 @@ export default function NewMarketAdPage() {
             </div>
           </div>
 
-          {/* التفاصيل */}
           <div>
             <label className="block text-[#0f4c8a] font-bold mb-2 text-sm">التفاصيل</label>
             <textarea

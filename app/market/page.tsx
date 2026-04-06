@@ -11,7 +11,6 @@ function timeAgo(dateString: string) {
   return `قبل ${Math.floor(diff / 86400)} يوم`;
 }
 
-// دالة لتنظيف النص العربي
 const normalizeText = (text: string) => {
   return text.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase();
 };
@@ -22,10 +21,8 @@ export default function MarketPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("الكل");
 
-  // ✨ الجاسوس الحميد (مراقبة بحث السوق)
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
-      // إذا كتب أكثر من حرفين، احفظ الكلمة في قاعدة البيانات بصمت
       if (searchTerm.trim().length > 2) {
         await supabase.from('search_logs').insert([{ term: searchTerm.trim() }]);
       }
@@ -43,7 +40,6 @@ export default function MarketPage() {
     fetchItems();
   }, []);
 
-  // الفلترة والبحث الذكي
   const filteredItems = items.filter(item => {
     const matchesCategory = selectedCategory === "الكل" || item.category === selectedCategory;
     
@@ -58,7 +54,6 @@ export default function MarketPage() {
     return matchesCategory && matchesSearch;
   });
 
-  // ✅ تم حذف المحلات التجارية من هنا
   const categories = [
     "الكل", 
     "حراج الكتب", 
@@ -130,7 +125,7 @@ export default function MarketPage() {
                 
                 <div className="flex flex-col flex-1 py-1">
                   <h3 className="font-bold text-lg text-primary line-clamp-2 leading-tight">{item.title}</h3>
-                  <div className="text-[#25D366] font-extrabold text-lg mt-1">{item.price > 0 ? `${item.price} ريال` : 'على السوم'}</div>
+                  {item.price > 0 && <div className="text-[#25D366] font-extrabold text-lg mt-1">{item.price} ريال</div>}
                   
                   <div className="mt-auto flex justify-between items-end text-xs text-gray-500 font-medium">
                     <div className="space-y-1">
