@@ -14,9 +14,7 @@ export default function Navbar() {
   const clearUser = useAuthStore((state: any) => state.clearUser);
   const [mounted, setMounted] = useState(false);
 
-  // ✨ سحب إيميل المدير من الخزنة السرية
   const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-  // التحقق هل المستخدم الحالي هو المدير؟
   const isAdmin = user && user.email === ADMIN_EMAIL;
 
   useEffect(() => {
@@ -34,7 +32,7 @@ export default function Navbar() {
   return (
     <nav className="bg-[#0f4c8a] text-white shadow-md relative z-50">
       
-      {/* 🌟 الجزء العلوي: الشعار والأزرار (للكمبيوتر والجوال) 🌟 */}
+      {/*  */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between" dir="rtl">
         <div className="flex items-center gap-3">
           
@@ -45,7 +43,7 @@ export default function Navbar() {
           
           <div className="hidden md:block h-6 w-px bg-white/20 mx-2"></div>
           
-          {/* 💻 روابط التنقل (تظهر جنب الشعار في الكمبيوتر فقط) */}
+          {/* */}
           <div className="hidden md:flex items-center gap-6 text-lg font-medium">
             <Link href="/market" className={`transition ${isActive('/market') ? 'text-[#fbc02d]' : 'opacity-80 hover:opacity-100 hover:text-[#fbc02d]'}`}>
               السوق
@@ -59,13 +57,13 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* اليسار: الأزرار */}
+        {/* */}
         <div className="flex items-center gap-2 sm:gap-4">
           {!mounted ? (
             <div className="w-24 h-10"></div>
           ) : user ? (
             <>
-              {/* 👑 الزر السري للمدير (يظهر لك أنت بس) */}
+              {/* */}
               {isAdmin && (
                 <Link href="/admin" className="flex items-center gap-1 sm:gap-2 bg-[#fbc02d]/20 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-[#fbc02d]/50 hover:bg-[#fbc02d]/30 transition">
                   <span className={`font-bold text-sm sm:text-base ${isActive('/admin') ? 'text-white' : 'text-[#fbc02d]'}`}>👑 الإدارة</span>
@@ -87,7 +85,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* 📱 شريط الأقسام الدائم (يظهر في الجوال فقط تحت الشعار) 📱 */}
+      {/*  */}
       <div className="md:hidden flex items-center justify-around bg-[#0c3a6b] px-1 py-1.5 border-t border-white/10 shadow-inner" dir="rtl">
         <Link href="/market" className={`flex-1 text-center py-2 font-bold text-sm transition ${isActive('/market') ? 'text-[#fbc02d] bg-white/5 rounded-lg' : 'text-white hover:text-gray-200'}`}>
           🛒 السوق

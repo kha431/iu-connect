@@ -10,9 +10,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#0f4c8a", // الأزرق الداكن
-        secondary: "#c8960c", // الذهبي
-        background: "#f0f4f9", // لون الخلفية الفاتح
+        primary: "#0f4c8a",
+        secondary: "#c8960c", 
+        background: "#f0f4f9",
       },
     },
   },

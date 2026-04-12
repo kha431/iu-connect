@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
-// ⏱️ دالة حساب الوقت (منذ كم دقيقة/ساعة)
+// 
 function formatTimeAgo(dateString: string) {
   const date = new Date(dateString);
   const now = new Date();
@@ -29,7 +29,7 @@ function formatTimeAgo(dateString: string) {
   if (diffInDays < 11) return `منذ ${diffInDays} أيام`;
   if (diffInDays < 30) return `منذ ${diffInDays} يوم`;
   
-  return date.toLocaleDateString('ar-SA'); // إذا مر أكثر من شهر، يعرض التاريخ العادي
+  return date.toLocaleDateString('ar-SA'); 
 }
 
 export default function GroupsPage() {
@@ -178,7 +178,7 @@ export default function GroupsPage() {
                   ) : (
                     <button className="bg-green-500 text-white font-bold px-6 py-2 rounded-xl text-sm hover:bg-green-600 transition shadow-sm flex items-center gap-1">انضمام 🤝</button>
                   )}
-                  {/* 🕒 هنا تم استدعاء دالة الوقت الجديدة */}
+                  {/* */}
                   <span className="text-gray-400 text-sm font-bold flex items-center gap-1">
                     🕒 {formatTimeAgo(group.created_at)}
                   </span>

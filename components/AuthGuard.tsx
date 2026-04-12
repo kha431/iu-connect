@@ -12,7 +12,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     setMounted(true);
   }, []);
 
-  // منع رمش الصفحة قبل تحميل الذاكرة
+  // 
   if (!mounted) {
     return (
       <div className="flex justify-center py-32">
@@ -21,7 +21,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // إذا مافي مستخدم في الذاكرة، اطرده
+  // 
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center py-32 space-y-4">
@@ -35,6 +35,6 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // إذا مسجل، افتح له الصفحة مباشرة
+  // 
   return <>{children}</>;
 }

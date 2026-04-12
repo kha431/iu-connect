@@ -15,7 +15,7 @@ export const useAuthStore = create<AuthStore>()(
       clearUser: () => set({ user: null }),
     }),
     {
-      name: 'iu-connect-auth', // هذا السطر هو السحر اللي يحفظ الدخول في المتصفح
+      name: 'iu-connect-auth', 
     }
   )
 );

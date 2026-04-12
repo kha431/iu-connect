@@ -10,7 +10,6 @@ export default function AdminDashboard() {
   const [logs, setLogs] = useState<any[]>([]);
   const [stats, setStats] = useState({ market: 0, groups: 0, lost: 0 });
   
-  // بيانات الجداول للإدارة
   const [activeTab, setActiveTab] = useState<'market' | 'groups' | 'lost'>('market');
   const [items, setItems] = useState<any[]>([]);
   const [loadingItems, setLoadingItems] = useState(false);
@@ -26,12 +25,11 @@ export default function AdminDashboard() {
       }
       setIsAdmin(true);
       fetchStatsAndLogs();
-      fetchItems('market'); // افتراضياً نجلب بيانات السوق أول ما يفتح
+      fetchItems('market'); 
     }
     checkAdmin();
   }, [router]);
 
-  // جلب الإحصائيات وسجلات البحث
   const fetchStatsAndLogs = async () => {
     const { count: mCount } = await supabase.from('market_items').select('*', { count: 'exact', head: true });
     const { count: gCount } = await supabase.from('groups').select('*', { count: 'exact', head: true });
@@ -42,7 +40,6 @@ export default function AdminDashboard() {
     if (searchData) setLogs(searchData);
   };
 
-  // جلب البيانات حسب التبويب النشط
   const fetchItems = async (table: 'market' | 'groups' | 'lost') => {
     setLoadingItems(true);
     let tableName = table === 'market' ? 'market_items' : table === 'lost' ? 'lost_found' : 'groups';
@@ -51,19 +48,16 @@ export default function AdminDashboard() {
     setLoadingItems(false);
   };
 
-  // تغيير التبويب
   const handleTabChange = (tab: 'market' | 'groups' | 'lost') => {
     setActiveTab(tab);
     fetchItems(tab);
   };
 
-  // ✨ دالة الحذف الخاصة بالمدير
   const handleDelete = async (id: string) => {
     if (!window.confirm('هل أنت متأكد من حذف هذا العنصر نهائياً؟')) return;
 
     let tableName = activeTab === 'market' ? 'market_items' : activeTab === 'lost' ? 'lost_found' : 'groups';
     
-    // محاولة الحذف
     const { error } = await supabase.from(tableName).delete().eq('id', id);
     
     if (error) {
@@ -71,8 +65,8 @@ export default function AdminDashboard() {
       alert('تم رفض الحذف! (نحتاج نعطيك صلاحية المدير في قاعدة البيانات SQL، ببلغك كيف بعدين)');
     } else {
       alert('تم الحذف بنجاح! 🗑️');
-      fetchItems(activeTab); // تحديث القائمة
-      fetchStatsAndLogs();   // تحديث العدادات
+      fetchItems(activeTab); 
+      fetchStatsAndLogs();   
     }
   };
 
@@ -89,7 +83,7 @@ export default function AdminDashboard() {
         <span className="text-6xl drop-shadow-lg">🛡️</span>
       </div>
 
-      {/* إحصائيات المنصة */}
+      {/* */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
           <div className="text-4xl mb-2">🛒</div>
@@ -108,7 +102,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* سجلات بحث الطلاب */}
+      {/* */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8">
         <h2 className="text-2xl font-bold text-[#0f4c8a] mb-6 flex items-center gap-2">
           <span>🎯</span> ماذا يبحث الطلاب الآن؟
@@ -127,20 +121,20 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      {/* 👑 أدوات الإدارة: التحكم في المحتوى */}
+      {/* */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">
         <h2 className="text-2xl font-bold text-red-600 mb-6 flex items-center gap-2">
           <span>⚙️</span> إدارة المحتوى (حذف العناصر)
         </h2>
 
-        {/* التبويبات */}
+        {/*  */}
         <div className="flex gap-2 mb-6 border-b pb-4 overflow-x-auto">
           <button onClick={() => handleTabChange('market')} className={`px-6 py-2 rounded-lg font-bold transition whitespace-nowrap ${activeTab === 'market' ? 'bg-[#0f4c8a] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>🛒 السوق</button>
           <button onClick={() => handleTabChange('groups')} className={`px-6 py-2 rounded-lg font-bold transition whitespace-nowrap ${activeTab === 'groups' ? 'bg-[#0f4c8a] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>👥 المجموعات</button>
           <button onClick={() => handleTabChange('lost')} className={`px-6 py-2 rounded-lg font-bold transition whitespace-nowrap ${activeTab === 'lost' ? 'bg-[#0f4c8a] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>🔍 المفقودات</button>
         </div>
 
-        {/* عرض العناصر للحذف */}
+        {/* */}
         {loadingItems ? (
           <div className="text-center py-10 text-gray-500">جاري تحميل البيانات...</div>
         ) : items.length === 0 ? (

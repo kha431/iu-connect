@@ -9,7 +9,6 @@ export default function NewGroupPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   
-  // 💡 السحر الأول: متغير لحفظ الـ ID حقك
   const [userId, setUserId] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
@@ -18,7 +17,6 @@ export default function NewGroupPage() {
     whatsapp: '',
   });
 
-  // 💡 السحر الثاني: دالة تشتغل أول ما تفتح الصفحة عشان تتأكد إنك مسجل دخول وتسحب الـ ID
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -36,7 +34,7 @@ export default function NewGroupPage() {
     e.preventDefault();
     setLoading(true);
 
-    // حماية إضافية لو طار تسجيل الدخول فجأة
+    
     if (!userId) {
       alert("حدث خطأ في المصادقة، يرجى تسجيل الدخول مجدداً");
       setLoading(false);
@@ -53,7 +51,7 @@ export default function NewGroupPage() {
           type: 'other', 
           participants: 1, 
           joined_numbers: [],
-          user_id: userId // 💡 السحر الثالث والأهم: ختمنا الإعلان باسمك ورقمك هنا!
+          user_id: userId // 
         }
       ]);
 

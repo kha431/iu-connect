@@ -36,7 +36,7 @@ export default function NewLostFoundPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // ✅ تم التعديل هنا: الحد الأقصى 500 كيلوبايت
+      
       if (file.size > 500 * 1024) {
         alert("حجم الصورة كبير جداً! الحد الأقصى هو 500 كيلوبايت.");
         return;
@@ -120,7 +120,7 @@ export default function NewLostFoundPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         
-        {/* نوع البلاغ */}
+        {/**/}
         <div className="flex bg-gray-100 p-1 rounded-xl">
           <label className="flex-1 text-center cursor-pointer">
             <input type="radio" value="lost" {...register("type")} className="hidden peer" />
@@ -136,7 +136,7 @@ export default function NewLostFoundPage() {
           </label>
         </div>
 
-        {/* رفع الصورة */}
+        {/**/}
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">صورة للغرض (اختياري)</label>
           <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 transition cursor-pointer relative">
@@ -160,7 +160,7 @@ export default function NewLostFoundPage() {
           </div>
         </div>
 
-        {/* العنوان والمكان */}
+        {/* */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">اسم الغرض *</label>
@@ -173,14 +173,14 @@ export default function NewLostFoundPage() {
           </div>
         </div>
 
-        {/* الواتساب */}
+        {/* */}
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">رقم الواتساب للتواصل *</label>
           <input placeholder="05xxxxxxxx" dir="ltr" {...register("whatsapp")} className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary outline-none text-left" />
           {errors.whatsapp && <p className="text-red-500 text-xs mt-1">{errors.whatsapp.message}</p>}
         </div>
 
-        {/* الوصف */}
+        {/* */}
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">وصف إضافي *</label>
           <textarea {...register("description")} rows={3} placeholder="لون الغرض، أي علامة مميزة، وقت الفقدان..." className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>

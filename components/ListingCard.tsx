@@ -8,7 +8,7 @@ interface ListingProps {
     category: string;
     condition: string;
     created_at: string;
-    image_url?: string; // أضفنا دعم الصورة هنا
+    image_url?: string; 
   };
 }
 
@@ -17,7 +17,7 @@ export default function ListingCard({ listing }: ListingProps) {
     <Link href={`/market/${listing.id}`}>
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col">
         
-        {/* مكان عرض الصورة الحقيقية */}
+        {/* */}
         <div className="h-48 bg-gray-50 border-b border-gray-100 flex items-center justify-center relative overflow-hidden">
           {listing.image_url ? (
             <img src={listing.image_url} alt={listing.title} className="w-full h-full object-cover" />

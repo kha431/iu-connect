@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
-// مترجم لحالة العنصر (بدون إيموجيات)
 const statusTranslator: Record<string, string> = {
   lost: "مفقود",
   found: "معثور عليه"
@@ -30,7 +29,6 @@ export default function LostAndFoundPage() {
     fetchItems();
   }, []);
 
-  // دالة التصفية (البحث الذكي)
   const filteredItems = items.filter((item) => {
     const searchLower = searchTerm.toLowerCase();
     const title = item.title || '';
@@ -38,7 +36,6 @@ export default function LostAndFoundPage() {
     return title.toLowerCase().includes(searchLower) || description.toLowerCase().includes(searchLower);
   });
 
-  // دالة تضبيط رقم الواتساب 
   const getWhatsappLink = (whatsapp: string, title: string) => {
     if (!whatsapp) return '#';
     const whatsappNumber = whatsapp.startsWith('0') ? '966' + whatsapp.slice(1) : whatsapp;
@@ -48,12 +45,12 @@ export default function LostAndFoundPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mb-20">
       
-      {/* 🌟 البانر الترحيبي الفخم 🌟 */}
+      {/*  */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8 flex flex-col md:flex-row justify-between items-center relative overflow-hidden gap-6">
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-100 via-orange-50 to-red-100"></div>
         <div className="text-right flex-1 pt-2">
           <h1 className="text-2xl md:text-3xl font-extrabold text-[#1e3264] mb-2">المفقودات والموجودات 🔍</h1>
-          {/* ✅ تم تعديل النص وحذف كلمة "غالي" */}
+          {/* */}
           <p className="text-gray-500 text-sm md:text-base">ضيعت شيء؟ أو لقيت شيء مو لك؟ أعلن هنا وخلنا نتعاون نرجعه لصاحبه.</p>
         </div>
         <div className="w-full md:w-auto">
@@ -63,7 +60,7 @@ export default function LostAndFoundPage() {
         </div>
       </div>
 
-      {/* ✨ شريط البحث الذكي ✨ */}
+      {/*  */}
       <div className="mb-8">
         <div className="relative max-w-2xl mx-auto">
           <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -89,7 +86,7 @@ export default function LostAndFoundPage() {
            </h2>
         </div>
       ) : (
-        /* 🌟 شبكة الكروت المنسقة 🌟 */
+        /*  */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredItems.map((item) => {
             const isLost = item.type === 'lost';
@@ -106,7 +103,7 @@ export default function LostAndFoundPage() {
                 ) : (
                   <span className="text-6xl drop-shadow-md">{isLost ? '❓' : '🎁'}</span>
                 )}
-                {/* ✅ تم إزالة الإيموجيات من شريط الحالة */}
+                {/* */}
                 <div className={`absolute top-4 right-4 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm backdrop-blur-md ${
                   item.is_resolved ? 'bg-gray-800 text-white border border-gray-700' : 
                   isLost ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-green-50 text-green-700 border border-green-200'
@@ -146,7 +143,7 @@ export default function LostAndFoundPage() {
         </div>
       )}
 
-      {/* 🌟 النافذة المنبثقة (Modal) للتفاصيل 🌟 */}
+      {/*  */}
       {selectedItem && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200">
